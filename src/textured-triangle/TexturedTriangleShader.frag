@@ -26,9 +26,11 @@
     IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
 uniform vec3 color = vec3(1.0, 1.0, 1.0);
 uniform sampler2D textureData;
+
+layout(binding = 0, rgba32f)
+uniform image2D imageTexture;
 
 in vec2 interpolatedTextureCoordinates;
 
@@ -37,4 +39,7 @@ out vec4 fragmentColor;
 void main() {
     fragmentColor.rgb = color*texture(textureData, interpolatedTextureCoordinates).rgb;
     fragmentColor.a = 1.0;
+
+    ivec2 coords = ivec2(gl_FragCoord.xy);
+    imageStore(imageTexture, coords, vec4(1.0));
 }

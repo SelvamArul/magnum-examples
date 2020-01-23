@@ -42,8 +42,11 @@ TexturedTriangleShader::TexturedTriangleShader() {
 
     const Utility::Resource rs{"textured-triangle-data"};
 
-    GL::Shader vert{GL::Version::GL330, GL::Shader::Type::Vertex};
-    GL::Shader frag{GL::Version::GL330, GL::Shader::Type::Fragment};
+    GL::Shader vert{GL::Version::GL420, GL::Shader::Type::Vertex};
+    GL::Shader frag{GL::Version::GL420, GL::Shader::Type::Fragment};
+
+    vert.addSource("#extension GL_ARB_shader_image_load_store : enable\n");
+    frag.addSource("#extension GL_ARB_shader_image_load_store : enable\n");
 
     vert.addSource(rs.get("TexturedTriangleShader.vert"));
     frag.addSource(rs.get("TexturedTriangleShader.frag"));

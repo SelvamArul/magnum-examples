@@ -32,6 +32,9 @@
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/GL/Texture.h>
 #include <Magnum/Math/Color.h>
+#include <Magnum/GL/TextureArray.h>
+#include <Magnum/GL/RectangleTexture.h>
+#include <Magnum/GL/ImageFormat.h>
 
 namespace Magnum { namespace Examples {
 
@@ -52,9 +55,21 @@ class TexturedTriangleShader: public GL::AbstractShaderProgram {
             return *this;
         }
 
-    private:
-        enum: Int { TextureUnit = 0 };
+        TexturedTriangleShader& bindTextureImage(Magnum::GL::RectangleTexture& texture)
+        {
+            texture.bindImage(TextureImage, Magnum::GL::ImageAccess::ReadWrite, Magnum::GL::ImageFormat::RGBA32F);
+            return *this;
+        }
 
+    private:
+        enum: Int 
+        { 
+            TextureUnit = 0,
+        };
+        enum: Int
+        {
+            TextureImage = 0,
+        };
         Int _colorUniform;
 };
 

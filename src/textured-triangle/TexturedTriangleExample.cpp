@@ -32,14 +32,20 @@
 #include <Corrade/PluginManager/Manager.h>
 #include <Corrade/Utility/Resource.h>
 #include <Magnum/ImageView.h>
+#include <Magnum/Image.h>
 #include <Magnum/GL/Buffer.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
+#include <Magnum/GL/Renderer.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>
 #include <Magnum/GL/TextureFormat.h>
+#include <Magnum/GL/TextureArray.h>
+#include <Magnum/GL/RectangleTexture.h>
+#include <Magnum/PixelFormat.h>
 #include <Magnum/Platform/Sdl2Application.h>
 #include <Magnum/Trade/AbstractImporter.h>
 #include <Magnum/Trade/ImageData.h>
+#include <Magnum/Trade/AbstractImageConverter.h>
 
 #include "TexturedTriangleShader.h"
 
@@ -55,6 +61,7 @@ class TexturedTriangleExample: public Platform::Application {
         GL::Mesh _mesh;
         TexturedTriangleShader _shader;
         GL::Texture2D _texture;
+        Magnum::GL::RectangleTexture _textureArray;
 };
 
 TexturedTriangleExample::TexturedTriangleExample(const Arguments& arguments):
@@ -97,6 +104,7 @@ TexturedTriangleExample::TexturedTriangleExample(const Arguments& arguments):
         .setMinificationFilter(GL::SamplerFilter::Linear)
         .setStorage(1, GL::textureFormat(image->format()), image->size())
         .setSubImage(0, {}, *image);
+    _textureArray.setStorage(GL::TextureFormat::RGBA32F, Magnum::Vector2i(image->size().x(), image->size().y()));
 }
 
 void TexturedTriangleExample::drawEvent() {
@@ -106,7 +114,17 @@ void TexturedTriangleExample::drawEvent() {
 
     _shader.setColor(0xffb2b2_rgbf)
         .bindTexture(_texture);
+    _shader.bindTextureImage(_textureArray);
     _mesh.draw(_shader);
+
+    Magnum::GL::Renderer::setMemoryBarrier(Magnum::GL::Renderer::MemoryBarrier::ShaderStorage);
+    
+    Image2D image = _textureArray.image({PixelFormat::RGBA8Unorm});
+    PluginManager::Manager<Trade::AbstractImageConverter> manager;
+    auto converter = manager.loadAndInstantiate("AnyImageConverter");
+    CORRADE_INTERNAL_ASSERT(converter);
+    converter->exportToFile(image, "/tmp/image.png");
+    Debug{} << "Saved an image to image.png";
 
     swapBuffers();
 }
