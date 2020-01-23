@@ -61,7 +61,7 @@ class TexturedTriangleExample: public Platform::Application {
         GL::Mesh _mesh;
         TexturedTriangleShader _shader;
         GL::Texture2D _texture;
-        Magnum::GL::RectangleTexture _textureArray;
+        GL::Texture2D _textureArray;
 };
 
 TexturedTriangleExample::TexturedTriangleExample(const Arguments& arguments):
@@ -104,7 +104,7 @@ TexturedTriangleExample::TexturedTriangleExample(const Arguments& arguments):
         .setMinificationFilter(GL::SamplerFilter::Linear)
         .setStorage(1, GL::textureFormat(image->format()), image->size())
         .setSubImage(0, {}, *image);
-    _textureArray.setStorage(GL::TextureFormat::RGBA32F, Magnum::Vector2i(image->size().x(), image->size().y()));
+    _textureArray.setStorage(1, GL::TextureFormat::RGBA32F, Magnum::Vector2i(image->size().x(), image->size().y()));
 }
 
 void TexturedTriangleExample::drawEvent() {
@@ -114,12 +114,12 @@ void TexturedTriangleExample::drawEvent() {
 
     _shader.setColor(0xffb2b2_rgbf)
         .bindTexture(_texture);
-    _shader.bindTextureImage(_textureArray);
+    _shader.bindTexture(_textureArray);
     _mesh.draw(_shader);
 
     Magnum::GL::Renderer::setMemoryBarrier(Magnum::GL::Renderer::MemoryBarrier::ShaderStorage);
     
-    Image2D image = _textureArray.image({PixelFormat::RGBA8Unorm});
+    Image2D image = _textureArray.image(0, {PixelFormat::RGBA8Unorm});
     PluginManager::Manager<Trade::AbstractImageConverter> manager;
     auto converter = manager.loadAndInstantiate("AnyImageConverter");
     CORRADE_INTERNAL_ASSERT(converter);
