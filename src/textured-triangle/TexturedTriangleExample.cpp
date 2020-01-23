@@ -114,7 +114,7 @@ void TexturedTriangleExample::drawEvent() {
 
     _shader.setColor(0xffb2b2_rgbf)
         .bindTexture(_texture);
-    _shader.bindTexture(_textureArray);
+    _shader.bindTextureImage(_textureArray);
     _mesh.draw(_shader);
 
     Magnum::GL::Renderer::setMemoryBarrier(Magnum::GL::Renderer::MemoryBarrier::ShaderStorage);

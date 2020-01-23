@@ -55,9 +55,9 @@ class TexturedTriangleShader: public GL::AbstractShaderProgram {
             return *this;
         }
 
-        TexturedTriangleShader& bindTextureImage(Magnum::GL::RectangleTexture& texture)
+        TexturedTriangleShader& bindTextureImage(GL::Texture2D& texture)
         {
-            texture.bindImage(TextureImage, Magnum::GL::ImageAccess::ReadWrite, Magnum::GL::ImageFormat::RGBA32F);
+            texture.bindImage(TextureImage,0, Magnum::GL::ImageAccess::ReadWrite, Magnum::GL::ImageFormat::RGBA32F);
             return *this;
         }
 
