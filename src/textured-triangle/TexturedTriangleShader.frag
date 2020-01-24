@@ -29,8 +29,14 @@
 uniform vec3 color = vec3(1.0, 1.0, 1.0);
 uniform sampler2D textureData;
 
+// layout(binding = 0, rgba32f)
+// uniform image2D imageTexture;
+
 layout(binding = 0, rgba32f)
-uniform image2D imageTexture;
+uniform image2DArray imageArrayOne;
+
+layout(binding = 1, rgba32f)
+uniform image2DArray imageArrayTwo;
 
 in vec2 interpolatedTextureCoordinates;
 
@@ -41,5 +47,14 @@ void main() {
     fragmentColor.a = 1.0;
 
     ivec2 coords = ivec2(gl_FragCoord.xy);
-    imageStore(imageTexture, coords, vec4(1.0));
+    // imageStore(imageTexture, coords, vec4(1.0));
+    imageStore(imageArrayOne, ivec3(coords, 0), vec4(1.0));
+    imageStore(imageArrayOne, ivec3(coords, 1), vec4(1.0));
+    imageStore(imageArrayOne, ivec3(coords, 2), vec4(1.0));
+    imageStore(imageArrayOne, ivec3(coords, 3), vec4(1.0));
+
+    imageStore(imageArrayTwo, ivec3(coords, 0), vec4(1.0));
+    imageStore(imageArrayTwo, ivec3(coords, 1), vec4(1.0));
+    imageStore(imageArrayTwo, ivec3(coords, 2), vec4(1.0));
+    imageStore(imageArrayTwo, ivec3(coords, 3), vec4(1.0));
 }

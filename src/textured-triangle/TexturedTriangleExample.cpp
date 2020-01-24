@@ -61,7 +61,8 @@ class TexturedTriangleExample: public Platform::Application {
         GL::Mesh _mesh;
         TexturedTriangleShader _shader;
         GL::Texture2D _texture;
-        GL::Texture2D _textureArray;
+        GL::Texture2DArray _textureImageArrayOne;
+        GL::Texture2DArray _textureImageArrayTwo;
 };
 
 TexturedTriangleExample::TexturedTriangleExample(const Arguments& arguments):
@@ -104,7 +105,10 @@ TexturedTriangleExample::TexturedTriangleExample(const Arguments& arguments):
         .setMinificationFilter(GL::SamplerFilter::Linear)
         .setStorage(1, GL::textureFormat(image->format()), image->size())
         .setSubImage(0, {}, *image);
-    _textureArray.setStorage(1, GL::TextureFormat::RGBA32F, Magnum::Vector2i(image->size().x(), image->size().y()));
+    
+    _textureImageArrayOne.setStorage(1, GL::TextureFormat::RGBA32F, Magnum::Vector3i(1920, 1080, 4));
+    _textureImageArrayTwo.setStorage(1, GL::TextureFormat::RGBA32F, Magnum::Vector3i(1920, 1080, 4));
+
 }
 
 void TexturedTriangleExample::drawEvent() {
@@ -114,17 +118,40 @@ void TexturedTriangleExample::drawEvent() {
 
     _shader.setColor(0xffb2b2_rgbf)
         .bindTexture(_texture);
-    _shader.bindTextureImage(_textureArray);
+    
+    _shader.bindTextureArrayOne(_textureImageArrayOne);
+    _shader.bindTextureArrayTwo(_textureImageArrayTwo);
     _mesh.draw(_shader);
 
     Magnum::GL::Renderer::setMemoryBarrier(Magnum::GL::Renderer::MemoryBarrier::ShaderStorage);
     
-    Image2D image = _textureArray.image(0, {PixelFormat::RGBA8Unorm});
-    PluginManager::Manager<Trade::AbstractImageConverter> manager;
-    auto converter = manager.loadAndInstantiate("AnyImageConverter");
-    CORRADE_INTERNAL_ASSERT(converter);
-    converter->exportToFile(image, "/tmp/image.png");
-    Debug{} << "Saved an image to image.png";
+
+    Image3D imageArrayOne = _textureImageArrayOne.image(0, {PixelFormat::RGBA8Unorm});
+
+    Debug{} << imageArrayOne.size();
+    const auto& arrayDataOne = Corrade::Containers::arrayCast<uint8_t>(imageArrayOne.data());
+    Debug{} << arrayDataOne.size();
+
+    for (int i = 0; i < arrayDataOne.size(); ++i)
+    {
+        if (arrayDataOne[i] != 0)
+        {
+            Debug{} <<"arrayDataOne non zero" <<  arrayDataOne[i];
+            break;
+        }
+    }
+
+    Image3D imageArrayTwo = _textureImageArrayTwo.image(0, {PixelFormat::RGBA8Unorm});
+    const auto& arrayDataTwo = Corrade::Containers::arrayCast<uint8_t>(imageArrayTwo.data());
+    for (int i = 0; i < arrayDataTwo.size(); ++i)
+    {
+        if (arrayDataTwo[i] != 0)
+        {
+            Debug{} <<"arrayDataTwo non zero" <<  arrayDataTwo[i];
+            break;
+        }
+
+    }
 
     swapBuffers();
 }

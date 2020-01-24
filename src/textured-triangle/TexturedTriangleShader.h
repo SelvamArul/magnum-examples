@@ -55,9 +55,21 @@ class TexturedTriangleShader: public GL::AbstractShaderProgram {
             return *this;
         }
 
-        TexturedTriangleShader& bindTextureImage(GL::Texture2D& texture)
+        // TexturedTriangleShader& bindTextureImage(GL::Texture2D& texture)
+        // {
+        //     texture.bindImage(TextureImage, 0, Magnum::GL::ImageAccess::ReadWrite, Magnum::GL::ImageFormat::RGBA32F);
+        //     return *this;
+        // }
+
+        TexturedTriangleShader& bindTextureArrayOne(Magnum::GL::Texture2DArray& texture)
         {
-            texture.bindImage(TextureImage,0, Magnum::GL::ImageAccess::ReadWrite, Magnum::GL::ImageFormat::RGBA32F);
+            texture.bindImageLayered(TextureArrayOne, 0, Magnum::GL::ImageAccess::ReadWrite, Magnum::GL::ImageFormat::RGBA32F);
+            return *this;
+        }
+
+        TexturedTriangleShader& bindTextureArrayTwo(Magnum::GL::Texture2DArray& texture)
+        {
+            texture.bindImageLayered(TextureArrayTwo, 0, Magnum::GL::ImageAccess::ReadWrite, Magnum::GL::ImageFormat::RGBA32F);
             return *this;
         }
 
@@ -68,7 +80,8 @@ class TexturedTriangleShader: public GL::AbstractShaderProgram {
         };
         enum: Int
         {
-            TextureImage = 0,
+            TextureArrayOne = 0,
+            TextureArrayTwo = 1,
         };
         Int _colorUniform;
 };
